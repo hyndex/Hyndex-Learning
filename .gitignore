@@ -4,5 +4,5 @@ auth/__pycache__/
 auth/migrations
 LeNo/__pycache__/
 LeNo/migrations
-*.sqlite3
+db.sqlite3
 
