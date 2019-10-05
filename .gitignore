@@ -1,8 +1,17 @@
 course/migrations
 course/__pycache__/
-auth/__pycache__/
-auth/migrations
+users/__pycache__/
+users/migrations
+media/__pycache__/
+media/migrations
+stats/__pycache__/
+stats/migrations
+notification/__pycache__/
+notification/migrations
+quiz/__pycache__/
+quiz/migrations
 LeNo/__pycache__/
 LeNo/migrations
 db.sqlite3
+db.sqlite3-journal
 
