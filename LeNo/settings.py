@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'course',
-    'notification'
+    'notification',
+    'media',
+    'stats',
+    'quiz',
 ]
 
 MIDDLEWARE = [

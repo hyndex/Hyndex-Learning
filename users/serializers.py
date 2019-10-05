@@ -60,10 +60,10 @@ class InstituteSerializer(serializers.ModelSerializer):
             User.objects.filter(username=user_data['username']).delete()
         return institute
 
-class ProfileGroupRoleSerializer(serializers.ModelSerializer):
+class ProfileRoleSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = ProfileGroupRole
+        model = ProfileRole
         fields='__all__'
         read_only_fields=('date_updated')
 

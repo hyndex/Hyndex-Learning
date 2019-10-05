@@ -23,7 +23,6 @@ class InstituteView(mixins.ListModelMixin,
     queryset = model.objects.all()
     serializer_class = serializer
     lookup_field='id'
-    #filter_fields='__all__'
     ordering_fields='__all__'
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -80,6 +79,8 @@ class GroupView(mixins.ListModelMixin,
     filter_fields='__all__'
     ordering_fields='__all__'
     def post(self, request, *args, **kwargs):
+        if not ProfileRole.objects.filter(user__user__username=request.user,role='Admin').count()>0:
+            return({'404'})
         return self.create(request, *args, **kwargs)
     def get(self, request, id=None):
         if id:
@@ -91,15 +92,15 @@ class GroupView(mixins.ListModelMixin,
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
-class ProfileGroupRoleView(mixins.ListModelMixin,
+class ProfileRoleView(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
                   mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
                   mixins.DestroyModelMixin,
                   generics.GenericAPIView):
     
-    model=ProfileGroupRole
-    serializer=ProfileGroupRoleSerializer
+    model=ProfileRole
+    serializer=ProfileRoleSerializer
     queryset = model.objects.all()
     serializer_class = serializer
     lookup_field='id'
