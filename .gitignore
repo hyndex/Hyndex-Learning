@@ -1,0 +1,7 @@
+course/migrations
+course/__pycache__/
+auth/__pycache__/
+auth/migrations
+LeNo/__pycache__/
+LeNo/migrations
+
