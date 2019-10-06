@@ -36,7 +36,8 @@ class Group(models.Model):
     image = models.ImageField(upload_to='profile/',blank=True, null=True)
     corp=models.ForeignKey(Institute, on_delete=models.CASCADE,  related_name='group_owner')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)  
-
+    def __str__(self):
+        return self.name
 
 class ProfileRole(models.Model):
     ROLE_CHOICES = (('Admin','admin'),('Analyst','analyst'),('GroupAdmin','groupadmin'),('Instructor','instructor'),('Employee','employee'))
@@ -46,4 +47,5 @@ class ProfileRole(models.Model):
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Role_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Role_updated_by', blank=True,null=True)
-    
+    def __str__(self):
+        return self.user.user.username+'->'+self.group.name+'('+self.role+')'

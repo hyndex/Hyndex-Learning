@@ -24,14 +24,14 @@ class CourseReviews(models.Model):
     REVIEW_CHOICES = ((1,1),(2,2),(3,3),(4,4),(5,5))
     user=models.ForeignKey(Profile, on_delete=models.CASCADE)
     course=models.ForeignKey(Course, on_delete=models.CASCADE)
-    field = models.IntegerField(choices=REVIEW_CHOICES, unique=True)
+    field = models.IntegerField(choices=REVIEW_CHOICES, default=5)
     time=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
 
 class LessonReviews(models.Model):
     REVIEW_CHOICES = ((1,1),(2,2),(3,3),(4,4),(5,5))
     user=models.ForeignKey(Profile, on_delete=models.CASCADE)
     lesson=models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    field = models.IntegerField(choices=REVIEW_CHOICES, unique=True)
+    field = models.IntegerField(choices=REVIEW_CHOICES, default=5)
     time=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
 
 

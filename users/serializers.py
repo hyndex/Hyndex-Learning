@@ -15,7 +15,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=True)
     class Meta:
         model = Profile
-        fields = ('user','name','phone','address','status','image','corp')
+        fields = ('user','name','phone','address','status','image')
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -61,7 +61,6 @@ class InstituteSerializer(serializers.ModelSerializer):
         return institute
 
 class ProfileRoleSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = ProfileRole
         fields='__all__'
@@ -71,5 +70,10 @@ class ProfileRoleSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields='__all__'
-        read_only_fields=('date_updated')
+        fields=('name','description','image','corp')
+        read_only_fields=('date_updated','corp')
+
+    def create(self, validated_data):
+        corp= Institute.objects.get(user=self.context['request'].user)
+        institute=Institute.objects.create(corp=corp,**validated_data)
+        return institute

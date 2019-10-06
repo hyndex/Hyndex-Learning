@@ -12,12 +12,7 @@ class Media(models.Model):
     name=models.CharField(max_length=50,blank=True, null=True)
     description=models.TextField(blank=True, null=True)
     access=models.CharField(max_length=1, default='2',choices=ROLE_CHOICES)
-    uploader=models.ForeignKey(User, on_delete=models.CASCADE)
-    publish_date=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
-    created_date=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
-
-class MediaDifferentQuality(models.Model):
-    media=models.ForeignKey(Media, on_delete=models.CASCADE)
-    quality=models.CharField(max_length=50,blank=True, null=True)
+    group=models.ForeignKey(Group, on_delete=models.CASCADE)
+    uploader=models.ForeignKey(User, on_delete=models.CASCADE,blank=True, null=True,default='')
     publish_date=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
     created_date=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)

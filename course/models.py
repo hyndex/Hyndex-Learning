@@ -20,7 +20,7 @@ class Course(models.Model):
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True, null=True)
 
 class Lesson(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name='lessonCourse')
     number = models.IntegerField(blank=False, null=True, default = 0)
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     description = models.TextField(blank=False, null=True, default = '')

@@ -6,18 +6,19 @@ from django.contrib.auth import authenticate
 from .models import *
 
 
+
+
 class CourseSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Course
         fields='__all__'
         read_only_fields=('date_updated',)
 
 class LessonSerializer(serializers.ModelSerializer):
-    
+    course=CourseSerializer(many=True,write_only=True,source='lessonCourse')
     class Meta:
         model = Lesson
-        fields='__all__'
+        fields=('course_id','number','name','description','media','thumbnail','question_number','date_updated')
         read_only_fields=('date_updated',)
 
 class LessonQuestionSerializer(serializers.ModelSerializer):
