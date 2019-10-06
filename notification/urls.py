@@ -3,7 +3,7 @@ from django.urls import path, include
 from .views import *
 
 urlpatterns = [
-    path('Notification/',NotificationView.as_view()),
-    path('NotificationQuiz/',NotificationQuizView.as_view()),
-    path('NotificationMedia/',NotificationMediaView.as_view()),
+    path('',NotificationView.as_view()),
+    path('quiz/',NotificationQuizView.as_view()),
+    path('media/',NotificationMediaView.as_view()),
 ]

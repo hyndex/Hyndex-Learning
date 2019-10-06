@@ -29,6 +29,16 @@ class Lesson(models.Model):
     question_number = models.IntegerField(blank=True, null=True,default=0)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True, null=True)
 
+# class LessonMedia(models.Model):
+#     lesson=models.ForeignKey(Lesson, related_name='lessonmedia_lesson', on_delete=models.CASCADE)
+#     media=models.ForeignKey(Media, related_name='lessonmedia_media', on_delete=models.PROTECT,blank=True, null=True,default='')
+#     priority=models.models.IntegerField(default=1)
+
+# class CourseMedia(models.Model):
+#     lesson=models.ForeignKey(Course, related_name='coursemedia_lesson', on_delete=models.CASCADE)
+#     media=models.ForeignKey(Media, related_name='coursemedia_media', on_delete=models.PROTECT,blank=True, null=True,default='')
+#     priority=models.models.IntegerField(default=1)
+
 class LessonQuestion(models.Model):
     lesson = models.ForeignKey(Lesson, related_name='lessionquestion_lession', on_delete=models.PROTECT,default='')
     question = models.ForeignKey(Question, related_name='lessionquestion_question', on_delete=models.PROTECT,default='')
