@@ -15,3 +15,9 @@ class Media(models.Model):
     uploader=models.ForeignKey(User, on_delete=models.CASCADE)
     publish_date=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
     created_date=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
+
+class MediaDifferentQuality(models.Model):
+    media=models.ForeignKey(Media, on_delete=models.CASCADE)
+    quality=models.CharField(max_length=50,blank=True, null=True)
+    publish_date=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
+    created_date=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)

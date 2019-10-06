@@ -20,6 +20,7 @@ from users.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
+    path('Notification/', include('notification.urls')),
     #path('auth/',include('rest_framework.urls')),
     #path('login/',LoginView.as_view()),
     #path('logout/',LogoutView.as_view()),

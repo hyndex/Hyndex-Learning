@@ -13,29 +13,32 @@ class Course(models.Model):
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     description = models.TextField(blank=False, null=True, default = '')
     category = models.CharField(max_length=50, blank=False, null=True, default = '')
-    media = models.ForeignKey(Media, on_delete=models.PROTECT,blank=True, null=True)
+    media = models.ForeignKey(Media, related_name='course_media', on_delete=models.PROTECT,blank=True, null=True)
+    thumbnail = models.ForeignKey(Media, related_name='thumbnail_thumbnail', on_delete=models.PROTECT,blank=True, null=True)
     status = models.CharField(max_length=10, blank=True, null=True)
     instructor = models.ForeignKey(Profile,on_delete=models.PROTECT)
-    date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
+    date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True, null=True)
 
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     number = models.IntegerField(blank=False, null=True, default = 0)
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     description = models.TextField(blank=False, null=True, default = '')
-    media = models.ForeignKey(Media, on_delete=models.PROTECT,blank=True, null=True)
+    media = models.ForeignKey(Media, related_name='lession_media', on_delete=models.PROTECT,blank=True, null=True,default='')
+    thumbnail = models.ForeignKey(Media, related_name='lession_thumbnail', on_delete=models.PROTECT,blank=True, null=True,default='')
     question_number = models.IntegerField(blank=True, null=True,default=0)
-    date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
+    date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True, null=True)
 
 class LessonQuestion(models.Model):
-    lesson = models.ForeignKey(Lesson, on_delete=models.PROTECT)
-    question = models.ForeignKey(Question, on_delete=models.PROTECT)
+    lesson = models.ForeignKey(Lesson, related_name='lessionquestion_lession', on_delete=models.PROTECT,default='')
+    question = models.ForeignKey(Question, related_name='lessionquestion_question', on_delete=models.PROTECT,default='')
 
 class GroupAllocation(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.PROTECT,blank=True, null=True)
-    group = models.ForeignKey(Group, on_delete=models.PROTECT,blank=True, null=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,blank=True, null=True)
-    date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
+    course = models.ForeignKey(Course, related_name='groupallocation_course', on_delete=models.PROTECT,blank=True, null=True,default='')
+    group = models.ForeignKey(Group, related_name='groupallocation_group', on_delete=models.PROTECT,blank=True, null=True,default='')
+    created_by = models.ForeignKey(User, related_name='groupallocation_created_by', on_delete=models.PROTECT,blank=True, null=True,default='')
+    deadline = models.DateField(blank=True, null=True,default='')
+    date_updated = models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
 
 
     
