@@ -10,9 +10,9 @@ notification/__pycache__/
 notification/migrations
 quiz/__pycache__/
 quiz/migrations
-LeNo/__pycache__/
-LeNo/migrations
+NeLeNo/__pycache__/
+NeLeNo/migrations
 db.sqlite3
 db.sqlite3-journal
 *.cpython
-
+*.pyc
