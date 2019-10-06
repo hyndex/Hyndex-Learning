@@ -33,7 +33,7 @@ class LessonQuestion(models.Model):
     lesson = models.ForeignKey(Lesson, related_name='lessionquestion_lession', on_delete=models.PROTECT,default='')
     question = models.ForeignKey(Question, related_name='lessionquestion_question', on_delete=models.PROTECT,default='')
 
-class GroupAllocation(models.Model):
+class GroupCourseAllocation(models.Model):
     course = models.ForeignKey(Course, related_name='groupallocation_course', on_delete=models.PROTECT,blank=True, null=True,default='')
     group = models.ForeignKey(Group, related_name='groupallocation_group', on_delete=models.PROTECT,blank=True, null=True,default='')
     created_by = models.ForeignKey(User, related_name='groupallocation_created_by', on_delete=models.PROTECT,blank=True, null=True,default='')
