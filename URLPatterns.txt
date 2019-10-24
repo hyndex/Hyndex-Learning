@@ -1,0 +1,33 @@
+institute
+==========
+POST :- /institute
+GET :- /institute/id
+PUT :- /institute/id
+DELETE :- /institute/id
+
+Profile # No need for <institution> => request.user.username == is_admin
+==========
+POST :- /profile/<institute>/
+GET :- /profile/<institute>/<id>
+PUT :- /profile/<institute>/<id>
+DELETE :- /profile/<institute>/<id>
+
+Group # No need for <institution> => request.user.username == is_admin
+==========
+POST :- /group/<institute>/
+GET :- /group/<institute>/<id>
+PUT :- /group/<institute>/<id>
+DELETE :- /group/<institute>/<id>
+
+ProfileRole 
+==========
+POST :- /profilerole/<group>/
+GET :- /profilerole/<group>/
+PUT :- /profilerole/<group>/
+DELETE :- /profilerole/<group>/
+
+for Instructor,Analyst etc etc
+    POST :- /profilerole/
+    GET :- /profilerole/
+    PUT :- /profilerole/
+    DELETE :- /profilerole/

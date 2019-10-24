@@ -4,56 +4,93 @@ from rest_framework.permissions import BasePermission
 from django.db.models import Q
 from users.models import *
 
+#pk=view.kwargs['id']
 
-class ProfileRolePermission(BasePermission):
+
+class InstitutePermission(BasePermission):
     message='You are not authorized to this data'
-    def has_object_permission(self, request, view):
+    SAFE_METHOD = ['GET','POST','PUT','DELETE']
+    def has_permission(self, request, view):
+        if request.method not in SAFE_METHOD:
+            return False
+        if request.method == 'POST':
+            return True
         if request.user.is_authenticated:
-            if request.method in ['GET']:
-            group_id=request.data['group_id']
-            confirm=ProfileRole.objects.filter(user__user__username=request.user.username,
-                                        group__id=group_id,
-                                        Q(role='admin')||Q(role='groupadmin')).count()
-            if not confirm>0:
-                return False
+            if request.method in ['GET','PUT','DELETE']:
+                confirm=Institute.objects.filter(user__username=request.user.username).count()>0
+                return confirm
         return True
 
-    def has_object_permission(self, request, view, obj):
-        if request.user.is_authenticated:
-            if request.method in ['PUT','DELETE']:
-                group_id=request.data['group_id']
-                confirm=ProfileRole.objects.filter(user__user__username=request.user.username,
-                                        group__id=group_id,
-                                        Q(role='admin')||Q(role='groupadmin')).count()
-                if confirm>0:
-                    return True
-            if request.method in ['POST']:
-                confirm=Institute.objects.filter(user__username=request.user.username).count()
-                if confirm>0:
-                    return True
-            
-        return False
 
-def ProfileRoleQuerySet():
-    return ProfileRole.objects.all()
+def InstituteQuerySet(request):
+    return Institute.objects.filter(user__username=request.user.username)
+
 
 class ProfilePermission(BasePermission):
     message='You are not authorized to this data'
-    def has_object_permission(self, request, view):
+    SAFE_METHOD = ['GET','POST','PUT','DELETE']
+    def has_permission(self, request, view):
+        if request.method not in SAFE_METHOD:
+            return False
         if request.user.is_authenticated:
-            if request.method in ['GET','POST']:
-            confirm=Institute.objects.filter(user__username=request.user.username).count()
-            if not count>0:
-                return False
-        return True
+            if request.method in ['GET','DELETE','POST','PUT']:
+                institute=Institute.objects.filter(user__username=request.user.username).count()>0
+                profile=Profile.objects.filter(user__username=request.user.username).count()>0
+                if (Institute) or (profile and request.method in ['GET','PUT']):
+                    return True
+        return False
 
-    def has_object_permission(self, request, view, obj):
+def ProfileQuerySet(request):
+    if Institute.objects.filter(user__username=request.user.username).count()>0:
+        return Profile.objects.filter(corp__user__username=request.user.username)
+    return Profile.objects.filter(user__username=request.user.username)
+
+
+class ProfileRolePermission(BasePermission):
+    message='You are not authorized to this data'
+    SAFE_METHOD = ['GET','POST','PUT','DELETE']
+    def has_permission(self, request, view):
+        if request.method not in SAFE_METHOD:
+            return False
         if request.user.is_authenticated:
-            if request.method in ['GET','PUT','DELETE']:
-                is_Admin=Profile.objects.filter(corp__user__username=request.user.username).count()>0
-                is_Self=Profile.objects.filter(user__username=request.user.username).count()>0
-                if not is_Admin or is_Self:
-                    return False
+            if request.method in ['GET','POST','PUT','DELETE']:
+                confirm=ProfileRole.objects.filter(
+                            Q(user__user__username=request.user.username),
+                            Q(role='admin')|Q(role='groupadmin')).count()>0
+                if confirm:
+                    return True
+        return False
 
-def ProfileQuerySet():
-    return Profile.objects.all()
+   
+def ProfileRoleQuerySet(request):
+    return ProfileRole.objects.filter(
+        Q(user__user__username=request.user.username),
+        Q(role='admin')|Q(role='groupadmin')
+        )
+
+
+class GroupPermission(BasePermission):
+    message='You are not authorized to this data'
+    SAFE_METHOD = ['GET','POST','PUT','DELETE']
+    def has_permission(self, request, view):
+        if request.method not in SAFE_METHOD:
+            return False
+        if request.user.is_authenticated:
+            if request.method in ['GET','POST','PUT','DELETE']:
+                confirm=Group.objects.filter(corp__user__username=request.user.username).count()>0
+                if confirm:
+                    return True
+            if request.method in ['GET']:
+                confirm=ProfileRole.objects.filter(user__user__username=request.user.username).count()>0
+                if confirm:
+                    return True
+        return False  
+
+def GroupQuerySet(request):
+    try:
+        institute=Profile.objects.get(user__username=request.user.username).corp.user.username
+    except:
+        institute=request.user.username
+
+    return Group.objects.filter(corp__user__username=institute)
+

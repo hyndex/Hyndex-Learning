@@ -1,119 +1,93 @@
-from django.shortcuts import render
-from rest_framework import mixins
-from rest_framework.generics import CreateAPIView
-from rest_framework import generics
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter,SearchFilter
-from rest_framework.authtoken.models import Token
-from rest_framework.permissions import *
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication, BasicAuthentication
+from django.contrib.auth import login as django_login, logout as django_logout
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-
+from rest_framework.authtoken.models import Token
+from django.http import JsonResponse
 from .serializers import *
 
-class InstituteView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=Institute
-    serializer=InstituteSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    lookup_field='id'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+
+class InstituteViewSet(viewsets.ModelViewSet):
+    queryset = Institute.objects.all()
+    serializer_class = InstituteSerializer
+    # permission_classes = [CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        return InstituteQuerySet(self.request)
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Institute.objects.all()
+    serializer_class = InstituteSerializer
+    # permission_classes = [CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        return ProfileQuerySet(self.request)
+
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Institute.objects.all()
+    serializer_class = InstituteSerializer
+    # permission_classes = [CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        return GroupQuerySet(self.request)
+
+class ProfileRoleViewSet(viewsets.ModelViewSet):
+    queryset = Institute.objects.all()
+    serializer_class = InstituteSerializer
+    # permission_classes = [CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        return ProfileRoleQuerySet(self.request)
 
 
-class ProfileView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=Profile
-    serializer=ProfileSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    lookup_field='id'
-    #filter_fields='__all__'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+############################################################################
 
+class ChangePasswordView(UpdateAPIView):
+        """
+        An endpoint for changing password.
+        """
+        serializer_class = ChangePasswordSerializer
+        model = User
+        permission_classes = (IsAuthenticated,)
 
-class GroupView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=Group
-    serializer=GroupSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    lookup_field='id'
-    filter_fields='__all__'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        if not ProfileRole.objects.filter(user__user__username=request.user,role='Admin').count()>0:
-            return({'404'})
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+        def get_object(self, queryset=None):
+            obj = self.request.user
+            return obj
 
-class ProfileRoleView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=ProfileRole
-    serializer=ProfileRoleSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    lookup_field='id'
-    filter_fields='__all__'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+        def update(self, request, *args, **kwargs):
+            self.object = self.get_object()
+            serializer = self.get_serializer(data=request.data)
+
+            if serializer.is_valid():
+                # Check old password
+                if not self.object.check_password(serializer.data.get("old_password")):
+                    return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+                # set_password also hashes the password that the user will get
+                self.object.set_password(serializer.data.get("new_password"))
+                self.object.save()
+                return Response("Success.", status=status.HTTP_200_OK)
+
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)# if data is not valid then will not proceed forward and return a error msg
+        user = serializer.validated_data['user']
+        django_login(request,user)
+        token, created=Token.objects.get_or_create(user=user)#created = True if token already exist else False
+        return Response({"token": token.key },status=200)
+
+class LogoutView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    def post(self, request):
+        try:
+            request.user.auth_token.delete()
+        except (AttributeError, ObjectDoesNotExist):
+            pass
+        django_logout(request)
+        return Response({"msg":"successfully logout"},status=204)

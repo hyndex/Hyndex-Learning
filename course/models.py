@@ -13,9 +13,9 @@ class Course(models.Model):
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     description = models.TextField(blank=False, null=True, default = '')
     category = models.CharField(max_length=50, blank=False, null=True, default = '')
-    media = models.ForeignKey(Media, related_name='course_media', on_delete=models.PROTECT,blank=True, null=True)
-    thumbnail = models.ForeignKey(Media, related_name='thumbnail_thumbnail', on_delete=models.PROTECT,blank=True, null=True)
-    status = models.CharField(max_length=10, blank=True, null=True)
+    media = models.ForeignKey(Media, related_name='course_media', on_delete=models.PROTECT,blank=True, null=True,default='')
+    thumbnail = models.ForeignKey(Media, related_name='thumbnail_thumbnail', on_delete=models.PROTECT,blank=True, null=True,default='')
+    # status = models.CharField(max_length=10, blank=True, null=True)
     instructor = models.ForeignKey(Profile,on_delete=models.PROTECT)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True, null=True)
 

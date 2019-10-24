@@ -40,9 +40,9 @@ class Group(models.Model):
         return self.name
 
 class ProfileRole(models.Model):
-    ROLE_CHOICES = (('Admin','admin'),('Analyst','analyst'),('GroupAdmin','groupadmin'),('Instructor','instructor'),('Employee','employee'))
+    ROLE_CHOICES = (('Admin','admin'),('GroupAdmin','groupadmin'),('Employee','employee'))#,('Instructor','instructor')
     user = models.OneToOneField(Profile, on_delete=models.CASCADE)
-    group = models.OneToOneField(Group, on_delete=models.PROTECT, blank=True, null=True)
+    group = models.OneToOneField(Group, on_delete=models.PROTECT, blank=True, null=True,default='')
     role = models.CharField(max_length=15, default='employee',choices=ROLE_CHOICES)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Role_created_by', blank=True,null=True)
