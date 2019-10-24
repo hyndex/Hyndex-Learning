@@ -21,13 +21,13 @@ class LessonReviews(models.Model):
     time=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
 
 
-class LessonEnroll(models.Model):
+class CourseEnroll(models.Model):
     user=models.ForeignKey(Profile, on_delete=models.CASCADE)
-    lesson=models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    lesson=models.ForeignKey(Course, on_delete=models.CASCADE)
     completed=models.CharField(max_length=10,blank=True, null=True,default='')
     time=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
 
-class LessonQuiz(models.Model):
+class LessonUserQuiz(models.Model):
     user=models.ForeignKey(Profile, on_delete=models.PROTECT,blank=True, null=True)
     lesson=models.ForeignKey(Lesson, on_delete=models.PROTECT,blank=True, null=True)
     question=models.ForeignKey(Question, on_delete=models.PROTECT,blank=True, null=True)

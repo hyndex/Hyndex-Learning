@@ -3,20 +3,8 @@ from users.models import *
 from rest_framework import exceptions
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from .models import *
+from .permissions import *
 
-
-class NotificationStatisticsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = NotificationStatistics
-        fields='__all__'
-        read_only_fields=('date_updated',)
-
-class NotificationReviewsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = NotificationReviews
-        fields='__all__'
-        read_only_fields=('date_updated',)
 
 class CourseReviewsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,21 +18,22 @@ class LessonReviewsSerializer(serializers.ModelSerializer):
         fields='__all__'
         read_only_fields=('date_updated',)
 
-class LessonEnrollSerializer(serializers.ModelSerializer):
+class CourseEnrollSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LessonEnroll
+        model = CourseEnroll
         fields='__all__'
         read_only_fields=('date_updated',)
 
-class LessonQuizSerializer(serializers.ModelSerializer):
+class LessonUserQuizSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LessonQuiz
+        model = LessonUserQuiz
         fields='__all__'
         read_only_fields=('date_updated',)
 
-class NotificationQuizSerializer(serializers.ModelSerializer):
+class GroupCourseAllocationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = NotificationQuiz
+        model = GroupCourseAllocation
         fields='__all__'
         read_only_fields=('date_updated',)
+
 
