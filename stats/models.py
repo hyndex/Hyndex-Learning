@@ -37,8 +37,13 @@ class LessonQuiz(models.Model):
     review=models.TextField(blank=True, null=True,default='')
     time_of_answer=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
 
+class GroupCourseAllocation(models.Model):
+    course = models.ForeignKey(Course, related_name='groupallocation_course', on_delete=models.PROTECT,blank=True, null=True,default='')
+    group = models.ForeignKey(Group, related_name='groupallocation_group', on_delete=models.PROTECT,blank=True, null=True,default='')
+    created_by = models.ForeignKey(User, related_name='groupallocation_created_by', on_delete=models.PROTECT,blank=True, null=True,default='')
+    deadline = models.DateField(blank=True, null=True,default='')
+    date_updated = models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
 #course
 
 #coursequiz
 
-#notificationquiz

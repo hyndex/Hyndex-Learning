@@ -1,10 +1,14 @@
-from django.contrib import admin
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import *
 
+# Create a router and register our viewsets with it.
+router = DefaultRouter()
+router.register(r'Course', CourseViewSet)
+router.register(r'Lesson', LessonViewSet)
+router.register(r'LessonQuestion', LessonQuestionViewSet)
+
+# The API URLs are now determined automatically by the router.
 urlpatterns = [
-    path('',CourseView.as_view()),
-    path('lesson/',LessonView.as_view()),
-    path('question/',LessonQuestionView.as_view()),
-    path('grouptocourse/',GroupCourseAllocationView.as_view()),
+    path('', include(router.urls)),
 ]
