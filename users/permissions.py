@@ -17,9 +17,11 @@ class InstitutePermission(BasePermission):
             return True
         if request.user.is_authenticated:
             if request.method in ['GET','PUT','DELETE']:
-                confirm=Institute.objects.filter(user__username=request.user.username).count()>0
-                return confirm
-        return True
+                masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
+                admin=ProfileRole.objects.filter(user__user__username=request.user.username,role='admin').count()>0
+                if admin or masterAccount:
+                    return True
+        return False
 
 
 def InstituteQuerySet(request):
@@ -34,9 +36,9 @@ class ProfilePermission(BasePermission):
             return False
         if request.user.is_authenticated:
             if request.method in ['GET','DELETE','POST','PUT']:
-                institute=Institute.objects.filter(user__username=request.user.username).count()>0
-                profile=Profile.objects.filter(user__username=request.user.username).count()>0
-                if (Institute) or (profile and request.method in ['GET','PUT']):
+                masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
+                admin=ProfileRole.objects.filter(user__user__username=request.user.username,role='admin').count()>0
+                if admin or masterAccount:
                     return True
         return False
 
@@ -54,19 +56,23 @@ class ProfileRolePermission(BasePermission):
             return False
         if request.user.is_authenticated:
             if request.method in ['GET','POST','PUT','DELETE']:
-                confirm=ProfileRole.objects.filter(
-                            Q(user__user__username=request.user.username),
-                            Q(role='admin')|Q(role='groupadmin')).count()>0
-                if confirm:
+                masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
+                confirm=ProfileRole.objects.filter(user__user__username=request.user.username,role='admin').count()>0
+                if confirm or masterAccount:
                     return True
         return False
 
    
 def ProfileRoleQuerySet(request):
-    return ProfileRole.objects.filter(
-        Q(user__user__username=request.user.username),
-        Q(role='admin')|Q(role='groupadmin')
-        )
+    masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
+    confirm=ProfileRole.objects.filter(user__user__username=request.user.username,role='admin').count()>0
+    if confirm:
+        institute = Profile.objects.get(user__username=request.user.username).corp
+        return ProfileRole.objects.filter(user__user__username=institute)
+    if masterAccount:
+        return ProfileRole.objects.filter(user__user__username=request.user.username)
+    
+    
 
 
 class GroupPermission(BasePermission):
@@ -77,19 +83,23 @@ class GroupPermission(BasePermission):
             return False
         if request.user.is_authenticated:
             if request.method in ['GET','POST','PUT','DELETE']:
-                confirm=Group.objects.filter(corp__user__username=request.user.username).count()>0
-                if confirm:
+                masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
+                admin=ProfileRole.objects.filter(user__user__username=request.user.username,role='admin').count()>0
+                if admin or masterAccount:
                     return True
             if request.method in ['GET']:
+                masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
                 confirm=ProfileRole.objects.filter(user__user__username=request.user.username).count()>0
-                if confirm:
+                if confirm or masterAccount:
                     return True
         return False  
 
 def GroupQuerySet(request):
     try:
+        # in case of admin
         institute=Profile.objects.get(user__username=request.user.username).corp.user.username
     except:
+        # in case od masterAccount
         institute=request.user.username
 
     return Group.objects.filter(corp__user__username=institute)
