@@ -26,6 +26,7 @@ class Options(models.Model):
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     option = models.ForeignKey(Options, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
 
 

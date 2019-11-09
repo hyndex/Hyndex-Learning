@@ -16,4 +16,6 @@ Learning and Notification platform for Corporates. Corporates can easily train t
   - Give company updates via videos
   - Quiz on Notification
 
+# Remember
+  - Quiz question will be acccessible throuvh only nested serialization of Lession ...
 
