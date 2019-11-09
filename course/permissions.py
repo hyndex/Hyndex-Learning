@@ -13,17 +13,23 @@ class CoursePermission(BasePermission):
     def has_permission(self, request, view):
         if request.method not in SAFE_METHOD:
             return False
-        if request.method == 'POST':
-            return True
         if request.user.is_authenticated:
-            if request.method in ['GET','PUT','DELETE']:
-                confirm=Institute.objects.filter(user__username=request.user.username).count()>0
+            if request.method in ['POST','PUT','DELETE']:
+                admin=Institute.objects.filter(user__username=request.user.username).count()>0
+                groupadmin=ProfileRole.objects.filter(user__user__username=request.user.username , ROLE_CHOICES='groupadmin').count()>0
+                if admin  or groupadmin:
+                    return True
+                else:
+                    return False
+            if request.method == 'GET':
+                confirm=Profile.objects.filter(user__username=request.user.username).count()>0
                 return confirm
         return True
 
 
 def CourseQuerySet(request):
-    return Institute.objects.filter(user__username=request.user.username)
+    corp = Profile.objects.get(user__username=request.user.username).corp
+    return Course.objects.filter(institute=corp)
 
 
 class LessonPermission(BasePermission):
@@ -33,18 +39,21 @@ class LessonPermission(BasePermission):
         if request.method not in SAFE_METHOD:
             return False
         if request.user.is_authenticated:
-            if request.method in ['GET','DELETE','POST','PUT']:
-                institute=Institute.objects.filter(user__username=request.user.username).count()>0
-                profile=Profile.objects.filter(user__username=request.user.username).count()>0
-                if (Institute) or (profile and request.method in ['GET','PUT']):
+            if request.method in ['POST','PUT','DELETE']:
+                admin=Institute.objects.filter(user__username=request.user.username).count()>0
+                groupadmin=ProfileRole.objects.filter(user__user__username=request.user.username , ROLE_CHOICES='groupadmin').count()>0
+                if admin  or groupadmin:
                     return True
-        return False
+                else:
+                    return False
+            if request.method == 'GET':
+                confirm=Profile.objects.filter(user__username=request.user.username).count()>0
+                return confirm
+        return True
 
 def LessonQuerySet(request):
-    if Institute.objects.filter(user__username=request.user.username).count()>0:
-        return Profile.objects.filter(corp__user__username=request.user.username)
-    return Profile.objects.filter(user__username=request.user.username)
-
+    corp = Profile.objects.get(user__username=request.user.username).corp
+    return Lesson.objects.filter(course__institute=corp)
 
 class LessonQuestionPermission(BasePermission):
     message='You are not authorized to this data'
@@ -53,20 +62,22 @@ class LessonQuestionPermission(BasePermission):
         if request.method not in SAFE_METHOD:
             return False
         if request.user.is_authenticated:
-            if request.method in ['GET','POST','PUT','DELETE']:
-                confirm=ProfileRole.objects.filter(
-                            Q(user__user__username=request.user.username),
-                            Q(role='admin')|Q(role='groupadmin')).count()>0
-                if confirm:
+            if request.method in ['POST','PUT','DELETE']:
+                admin=Institute.objects.filter(user__username=request.user.username).count()>0
+                groupadmin=ProfileRole.objects.filter(user__user__username=request.user.username , ROLE_CHOICES='groupadmin').count()>0
+                if admin  or groupadmin:
                     return True
-        return False
+                else:
+                    return False
+            if request.method == 'GET':
+                confirm=Profile.objects.filter(user__username=request.user.username).count()>0
+                return confirm
+        return True
 
    
 def LessonQuestionQuerySet(request):
-    return ProfileRole.objects.filter(
-        Q(user__user__username=request.user.username),
-        Q(role='admin')|Q(role='groupadmin')
-        )
+    corp = Profile.objects.get(user__username=request.user.username).corp
+    return LessonQuestion.objects.filter(lession_course__institute=corp)
 
 
 

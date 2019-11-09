@@ -40,7 +40,7 @@ class Group(models.Model):
         return self.name
 
 class ProfileRole(models.Model):
-    ROLE_CHOICES = (('Admin','admin'),('GroupAdmin','groupadmin'),('Employee','employee'))#,('Instructor','instructor')
+    ROLE_CHOICES = (('Admin','admin'),('GroupAdmin','groupadmin'),('Employee','employee'))
     user = models.OneToOneField(Profile, on_delete=models.CASCADE)
     group = models.OneToOneField(Group, on_delete=models.PROTECT, blank=True, null=True,default='')
     role = models.CharField(max_length=15, default='employee',choices=ROLE_CHOICES)

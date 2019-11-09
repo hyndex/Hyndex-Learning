@@ -2,9 +2,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.generics import CreateAPIView, UpdateAPIView
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication, BasicAuthentication
-from django.contrib.auth import login as django_login, logout as django_logout
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from django.http import JsonResponse
