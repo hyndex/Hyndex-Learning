@@ -64,7 +64,7 @@ class ProfileRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileRole
         fields='__all__'
-        read_only_fields=('date_updated')
+        read_only_fields=('date_updated',)
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -75,8 +75,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         corp= Institute.objects.get(user=self.context['request'].user)
-        institute=Institute.objects.create(corp=corp,**validated_data)
-        return institute
+        group=Group.objects.create(corp=corp,**validated_data)
+        return group
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()

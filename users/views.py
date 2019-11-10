@@ -14,31 +14,31 @@ from .serializers import *
 class InstituteViewSet(viewsets.ModelViewSet):
     queryset = Institute.objects.all()
     serializer_class = InstituteSerializer
-    # permission_classes = [CustomPermission]
+    permission_classes = [InstitutePermission]
     model=serializer_class().Meta().model
     def get_queryset(self):
         return InstituteQuerySet(self.request)
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Institute.objects.all()
-    serializer_class = InstituteSerializer
-    # permission_classes = [CustomPermission]
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [ProfilePermission]
     model=serializer_class().Meta().model
     def get_queryset(self):
         return ProfileQuerySet(self.request)
 
 class GroupViewSet(viewsets.ModelViewSet):
-    queryset = Institute.objects.all()
-    serializer_class = InstituteSerializer
-    # permission_classes = [CustomPermission]
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [GroupPermission]
     model=serializer_class().Meta().model
     def get_queryset(self):
         return GroupQuerySet(self.request)
 
 class ProfileRoleViewSet(viewsets.ModelViewSet):
-    queryset = Institute.objects.all()
-    serializer_class = InstituteSerializer
-    # permission_classes = [CustomPermission]
+    queryset = ProfileRole.objects.all()
+    serializer_class = ProfileRoleSerializer
+    permission_classes = [ProfileRolePermission]
     model=serializer_class().Meta().model
     def get_queryset(self):
         return ProfileRoleQuerySet(self.request)
@@ -79,8 +79,8 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)# if data is not valid then will not proceed forward and return a error msg
         user = serializer.validated_data['user']
         django_login(request,user)
-        token, created=Token.objects.get_or_create(user=user)#created = True if token already exist else False
-        return Response({"token": token.key },status=200)
+        # token, created=Token.objects.get_or_create(user=user)#created = True if token already exist else False
+        return Response({"token": "token.key" },status=200)
 
 class LogoutView(APIView):
     authentication_classes = (TokenAuthentication,)

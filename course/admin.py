@@ -4,4 +4,3 @@ from .models import *
 admin.site.register(Course)
 admin.site.register(Lesson)
 admin.site.register(LessonQuestion)
-admin.site.register(GroupCourseAllocation)

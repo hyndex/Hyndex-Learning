@@ -18,4 +18,11 @@ Learning and Notification platform for Corporates. Corporates can easily train t
 
 # Remember
   - Quiz question will be acccessible throuvh only nested serialization of Lession ...
+  - Enable token auth
 
+# Task Done
+  - Institute account create
+  - Institute and Profile Login
+  - Profile created by Institute
+  - Group Created by Institute
+  - Profile Role by Institute

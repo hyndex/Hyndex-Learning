@@ -32,10 +32,10 @@ class LessonQuestionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return LessonQuestionQuerySet(self.request)
 
-class GroupCourseAllocationViewSet(viewsets.ModelViewSet):
-    queryset = GroupCourseAllocation.objects.all()
-    serializer_class = GroupCourseAllocationSerializer
-    # permission_classes = [CustomPermission]
-    model=serializer_class().Meta().model
-    def get_queryset(self):
-        return GroupCourseAllocationQuerySet(self.request)
+# class GroupCourseAllocationViewSet(viewsets.ModelViewSet):
+#     queryset = GroupCourseAllocation.objects.all()
+#     serializer_class = GroupCourseAllocationSerializer
+#     # permission_classes = [CustomPermission]
+#     model=serializer_class().Meta().model
+#     def get_queryset(self):
+#         return GroupCourseAllocationQuerySet(self.request)

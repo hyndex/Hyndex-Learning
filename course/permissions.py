@@ -15,21 +15,25 @@ class CoursePermission(BasePermission):
             return False
         if request.user.is_authenticated:
             if request.method in ['POST','PUT','DELETE']:
-                admin=Institute.objects.filter(user__username=request.user.username).count()>0
-                groupadmin=ProfileRole.objects.filter(user__user__username=request.user.username , ROLE_CHOICES='groupadmin').count()>0
-                if admin  or groupadmin:
+                masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
+                admin=ProfileRole.objects.filter(user__user__username=request.user.username,role='admin').count()>0
+                if admin or masterAccount:
                     return True
                 else:
                     return False
             if request.method == 'GET':
+                masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
                 confirm=Profile.objects.filter(user__username=request.user.username).count()>0
-                return confirm
-        return True
+                if confirm or masterAccount:
+                    return True
+        return False
 
 
 def CourseQuerySet(request):
-    corp = Profile.objects.get(user__username=request.user.username).corp
-    return Course.objects.filter(institute=corp)
+    if Institute.objects.filter(user__username=request.user.username).count()>0:
+        return Course.objects.filter(institute__user__username=request.user.username)
+    corp = Profile.objects.get(user__username=request.user.username).corp.user.username
+    return Course.objects.filter(institute__user__username=corp)
 
 
 class LessonPermission(BasePermission):
@@ -52,7 +56,9 @@ class LessonPermission(BasePermission):
         return True
 
 def LessonQuerySet(request):
-    corp = Profile.objects.get(user__username=request.user.username).corp
+    if Institute.objects.filter(user__username=request.user.username).count()>0:
+        return Lesson.objects.filter(institute__user__username=request.user.username)
+    corp = Profile.objects.get(user__username=request.user.username).corp.user.username
     return Lesson.objects.filter(course__institute=corp)
 
 class LessonQuestionPermission(BasePermission):
@@ -78,6 +84,12 @@ class LessonQuestionPermission(BasePermission):
 def LessonQuestionQuerySet(request):
     corp = Profile.objects.get(user__username=request.user.username).corp
     return LessonQuestion.objects.filter(lession_course__institute=corp)
+
+    if Institute.objects.filter(user__username=request.user.username).count()>0:
+        return Lesson.objects.filter(institute__user__username=request.user.username)
+    corp = Profile.objects.get(user__username=request.user.username).corp.user.username
+    return Lesson.objects.filter(course__institute=corp)
+
 
 
 

@@ -9,8 +9,8 @@ from users.models import *
 
 class InstitutePermission(BasePermission):
     message='You are not authorized to this data'
-    SAFE_METHOD = ['GET','POST','PUT','DELETE']
     def has_permission(self, request, view):
+        SAFE_METHOD = ['GET','POST','PUT','DELETE']
         if request.method not in SAFE_METHOD:
             return False
         if request.method == 'POST':
@@ -30,8 +30,8 @@ def InstituteQuerySet(request):
 
 class ProfilePermission(BasePermission):
     message='You are not authorized to this data'
-    SAFE_METHOD = ['GET','POST','PUT','DELETE']
     def has_permission(self, request, view):
+        SAFE_METHOD = ['GET','POST','PUT','DELETE']
         if request.method not in SAFE_METHOD:
             return False
         if request.user.is_authenticated:
@@ -50,8 +50,8 @@ def ProfileQuerySet(request):
 
 class ProfileRolePermission(BasePermission):
     message='You are not authorized to this data'
-    SAFE_METHOD = ['GET','POST','PUT','DELETE']
     def has_permission(self, request, view):
+        SAFE_METHOD = ['GET','POST','PUT','DELETE']
         if request.method not in SAFE_METHOD:
             return False
         if request.user.is_authenticated:
@@ -77,8 +77,8 @@ def ProfileRoleQuerySet(request):
 
 class GroupPermission(BasePermission):
     message='You are not authorized to this data'
-    SAFE_METHOD = ['GET','POST','PUT','DELETE']
     def has_permission(self, request, view):
+        SAFE_METHOD = ['GET','POST','PUT','DELETE']
         if request.method not in SAFE_METHOD:
             return False
         if request.user.is_authenticated:
