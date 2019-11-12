@@ -19,6 +19,7 @@ Learning and Notification platform for Corporates. Corporates can easily train t
 # Remember
   - Quiz question will be acccessible throuvh only nested serialization of Lession ...
   - Enable token auth
+  - need to make external queryset to be accessible by all
 
 # Task Done
   - Institute account create

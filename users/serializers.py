@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework import exceptions
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from .models import *
+# from .models import *
 from .permissions import *
 
 class UserSerializer(serializers.ModelSerializer):
