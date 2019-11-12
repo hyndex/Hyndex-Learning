@@ -56,7 +56,7 @@ class LessonSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         course_id = validated_data.pop('course_id')
         course=Course.objects.get(id=course_id)
-        lession = Lession.objects.create(course=course,**validated_data)
+        lession = Lesson.objects.create(course=course,**validated_data)
         return lession
 
     def update(self, instance, validated_data):
