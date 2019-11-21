@@ -11,8 +11,37 @@ import datetime as dt
 class LessonQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = LessonQuestion
-        fields='__all__'
-        read_only_fields=('date_updated',)
+        fields=('lesson','question')
+        read_only_fields=('date_updated')
+
+    def create(self, validated_data):
+        username = self.context['request'].user.username
+        if Institute.objects.filter(user__username=username).count()>0:
+            corp = self.context['request'].user.username
+        else:
+            corp = Profile.objects.get(user__username=username).corp.user.username
+        lesson=validated_data.pop('lesson')
+        lesson=Lesson.objects.get(id=lesson)
+        question=validated_data.pop('question')
+        question=Question.objects.get(id=question)
+        ############NEED TO DO WORK CREATE QUESTION WITH OPTIONS####################
+        LessonQuestion.objects.create(lesson=lesson,question=question)
+    def update(self, instance, validated_data):
+        username = self.context['request'].user.username
+        if Institute.objects.filter(user__username=username).count()>0:
+            corp = self.context['request'].user.username
+        else:
+            corp = Profile.objects.get(user__username=username).corp.user.username
+        lesson=validated_data.pop('lesson')
+        lesson=Lesson.objects.get(id=lesson)
+        question=validated_data.pop('question')
+        question=Question.objects.get(id=question)
+        ############NEED TO DO WORK CREATE QUESTION WITH OPTIONS####################
+        instance.lesson=validated_data.get('lesson',instance.lesson)
+        instance.question=validated_data.get('question',instance.question)
+        instance.save()
+        return instance
+
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -24,10 +53,10 @@ class CourseSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         username = self.context['request'].user.username
         if Institute.objects.filter(user__username=username).count()>0:
-            corp = Course.objects.filter(institute__user__username=username)
+            corp = self.context['request'].user.username
         else:
             corp = Profile.objects.get(user__username=username).corp.user.username
-        institute=institute.objects.get(user__username=institute)
+        institute=institute.objects.get(user__username=corp)
         course = Course.objects.create(institute=institute,**validated_data)
         return course
 
