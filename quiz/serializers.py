@@ -1,53 +1,90 @@
 from rest_framework import serializers
-from users.models import *
-from rest_framework import exceptions
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
 from .permissions import *
-import datetime as dt
 
 
-class OptionSerializer(serializers.ModelSerializer):
+class StringSerializer(serializers.StringRelatedField):
+    def to_internal_value(self, value):
+        return value
+
+
+class QuestionSerializer(serializers.ModelSerializer):
+    choices = StringSerializer(many=True)
+
     class Meta:
         model = Question
-        fields=('question','name','description','media')
-        read_only_fields=('date_updated','institute')
+        fields = ('id', 'choices', 'media','question', 'order')
 
-class QuestionOptionSerializer(serializers.ModelSerializer):
+
+class AssignmentSerializer(serializers.ModelSerializer):
+    questions = serializers.SerializerMethodField()
+    teacher = StringSerializer(many=False)
+
     class Meta:
-        model = Question
-        fields=('institute','name','description','media','status','instructor','options')
-        read_only_fields=('date_updated','institute')
+        model = Assignment
+        fields = ('__all__')
 
-    def create(self, validated_data):
-        username = self.context['request'].user.username
-        if Institute.objects.filter(user__username=username).count()>0:
-            corp = self.context['request'].user.username
-        else:
-            corp = Profile.objects.get(user__username=username).corp.user.username
-        institute=institute.objects.get(user__username=corp)
-        question = Question.objects.create(institute=institute,**validated_data)
-        
-        options = validated_data.pop('options')
-        
-        for option in options:
-            opt_serializer = Options.objects.create(question=question,
-                                    name=option['name'],
-                                    description=option['description'],
-                                    media=option['media'],
-                                    )
-        return question
+    def get_questions(self, obj):
+        questions = QuestionSerializer(obj.questions.all(), many=True).data
+        return questions
 
-    # def update(self, instance, validated_data):
-    #     course_id = validated_data.pop('course_id')
-    #     course=Course.objects.get(id=course_id)
+    def create(self, request):
+        data = request.data
 
-    #     instance.number=validated_data.get('number',instance.number)
-    #     instance.name=validated_data.get('name',instance.name)
-    #     instance.description=validated_data.get('description',instance.description)
-    #     instance.media=validated_data.get('media',instance.media)
-    #     instance.thumbnail=validated_data.get('thumbnail',instance.thumbnail)
-    #     instance.question_number=validated_data.get('question_number',instance.question_number)
-    #     instance.date_updated=dt.datetime.now()
-    #     instance.save()
-    #     return instance
+        assignment = Assignment()
+        teacher = Profile.objects.get(user__username=request.user.username)
+        assignment.teacher = teacher
+        assignment.title = data['title']
+        assignment.save()
+
+        order = 1
+        for q in data['questions']:
+            newQ = Question()
+            newQ.question = q['title']
+            newQ.media = q['media']
+            newQ.order = order
+            newQ.save()
+
+            for c in q['choices']:
+                newC = Choice()
+                newC.title = c
+                newC.save()
+                newQ.choices.add(newC)
+
+            newQ.answer = Choice.objects.get(title=q['answer'])
+            newQ.assignment = assignment
+            newQ.save()
+            order += 1
+        return assignment
+
+
+class GradedAssignmentSerializer(serializers.ModelSerializer):
+    student = StringSerializer(many=False)
+
+    class Meta:
+        model = GradedAssignment
+        fields = ('__all__')
+
+    def create(self, request):
+        data = request.data
+        # print(data)
+
+        assignment = Assignment.objects.get(id=data['asntId'])
+        student = Profile.objects.get(user__username=request.user.username)
+
+        graded_asnt = GradedAssignment()
+        graded_asnt.assignment = assignment
+        graded_asnt.student = student
+
+        questions = [q for q in assignment.questions.all()]
+        answers = [data['answers'][a] for a in data['answers']]
+
+        answered_correct_count = 0
+        for i in range(len(questions)):
+            if questions[i].answer.title == answers[i]:
+                answered_correct_count += 1
+            i += 1
+
+        grade = answered_correct_count / len(questions) * 100
+        graded_asnt.grade = grade
+        graded_asnt.save()
+        return graded_asnt

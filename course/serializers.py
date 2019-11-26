@@ -8,42 +8,6 @@ import datetime as dt
 
 
 
-class LessonQuestionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LessonQuestion
-        fields=('lesson','question')
-        read_only_fields=('date_updated')
-
-    def create(self, validated_data):
-        username = self.context['request'].user.username
-        if Institute.objects.filter(user__username=username).count()>0:
-            corp = self.context['request'].user.username
-        else:
-            corp = Profile.objects.get(user__username=username).corp.user.username
-        lesson=validated_data.pop('lesson')
-        lesson=Lesson.objects.get(id=lesson)
-        question=validated_data.pop('question')
-        question=Question.objects.get(id=question)
-        ############NEED TO DO WORK CREATE QUESTION WITH OPTIONS####################
-        LessonQuestion.objects.create(lesson=lesson,question=question)
-    def update(self, instance, validated_data):
-        username = self.context['request'].user.username
-        if Institute.objects.filter(user__username=username).count()>0:
-            corp = self.context['request'].user.username
-        else:
-            corp = Profile.objects.get(user__username=username).corp.user.username
-        lesson=validated_data.pop('lesson')
-        lesson=Lesson.objects.get(id=lesson)
-        question=validated_data.pop('question')
-        question=Question.objects.get(id=question)
-        ############NEED TO DO WORK CREATE QUESTION WITH OPTIONS####################
-        instance.lesson=validated_data.get('lesson',instance.lesson)
-        instance.question=validated_data.get('question',instance.question)
-        instance.save()
-        return instance
-
-
-
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
@@ -79,7 +43,7 @@ class LessonSerializer(serializers.ModelSerializer):
     course=CourseSerializer(many=True,write_only=True,source='lessonCourse')
     class Meta:
         model = Lesson
-        fields=('course_id','number','name','description','media','thumbnail','question_number','date_updated')
+        fields=('course_id','number','name','description','media','thumbnail','question_number','assignment','date_updated')
         read_only_fields=('date_updated',)
 
     def create(self, validated_data):
@@ -98,6 +62,7 @@ class LessonSerializer(serializers.ModelSerializer):
         instance.media=validated_data.get('media',instance.media)
         instance.thumbnail=validated_data.get('thumbnail',instance.thumbnail)
         instance.question_number=validated_data.get('question_number',instance.question_number)
+        instance.assignment=validated_data.get('assignment',instance.assignment)
         instance.date_updated=dt.datetime.now()
         instance.save()
         return instance

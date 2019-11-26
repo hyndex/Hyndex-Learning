@@ -13,8 +13,8 @@ class Course(models.Model):
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     description = models.TextField(blank=False, null=True, default = '')
     category = models.CharField(max_length=50, blank=False, null=True, default = '')
-    media = models.ForeignKey(Media, related_name='course_media', on_delete=models.PROTECT,blank=True, null=True,default='')
-    thumbnail = models.ForeignKey(Media, related_name='thumbnail_thumbnail', on_delete=models.PROTECT,blank=True, null=True,default='')
+    media = models.ForeignKey(Media, related_name='coursemedia', on_delete=models.PROTECT,blank=True, null=True,default='')
+    thumbnail = models.ForeignKey(Media, related_name='thumbnailthumbnail', on_delete=models.PROTECT,blank=True, null=True,default='')
     # status = models.CharField(max_length=10, blank=True, null=True)
     instructor = models.ForeignKey(Profile,on_delete=models.PROTECT)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True, null=True)
@@ -24,15 +24,9 @@ class Lesson(models.Model):
     number = models.IntegerField(blank=False, null=True, default = 0)
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     description = models.TextField(blank=False, null=True, default = '')
-    media = models.ForeignKey(Media, related_name='lession_media', on_delete=models.PROTECT,blank=True, null=True,default='')
-    thumbnail = models.ForeignKey(Media, related_name='lession_thumbnail', on_delete=models.PROTECT,blank=True, null=True,default='')
+    media = models.ForeignKey(Media, related_name='lessionmedia', on_delete=models.PROTECT,blank=True, null=True,default='')
+    thumbnail = models.ForeignKey(Media, related_name='lessionthumbnail', on_delete=models.PROTECT,blank=True, null=True,default='')
     question_number = models.IntegerField(blank=True, null=True,default=0)
+    assignment = models.ForeignKey(Assignment, related_name='lessionassignment', on_delete=models.PROTECT,default='')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True, null=True)
 
-class LessonQuestion(models.Model):
-    lesson = models.ForeignKey(Lesson, related_name='lessionquestion_lession', on_delete=models.PROTECT,default='')
-    question = models.ForeignKey(Question, related_name='lessionquestion_question', on_delete=models.PROTECT,default='')
-
-
-
-    
