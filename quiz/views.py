@@ -2,6 +2,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework import viewsets
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
+from .permissions import *
 from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST
@@ -13,8 +14,8 @@ from .serializers import AssignmentSerializer, GradedAssignmentSerializer
 
 class AssignmentViewSet(viewsets.ModelViewSet):
     serializer_class = AssignmentSerializer
-    # queryset = Assignment.objects.all()
-    permission_classes = [AssignmentPermission]
+    queryset = Assignment.objects.all()
+    permission_classes = [AssignmentPermission] 
 
     def get_queryset(self):
         return AssignmentQuerySet(self.request)
@@ -30,7 +31,7 @@ class AssignmentViewSet(viewsets.ModelViewSet):
 
 class GradedAssignmentListView(ListAPIView):
     serializer_class = GradedAssignmentSerializer
-    permission_classes = [GradedAssignmentPermission]
+    # permission_classes = [GradedAssignmentPermission]
 
     def get_queryset(self):
         return GradedAssignmentQuerySet(self.request)
@@ -44,7 +45,7 @@ class GradedAssignmentListView(ListAPIView):
 class GradedAssignmentCreateView(CreateAPIView):
     serializer_class = GradedAssignmentSerializer
     queryset = GradedAssignment.objects.all()
-    permission_classes = [GradedAssignmentPermission]
+    # permission_classes = [GradedAssignmentPermission]
     def get_queryset(self):
         return GradedAssignmentQuerySet(self.request)
 

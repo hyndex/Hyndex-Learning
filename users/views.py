@@ -9,10 +9,14 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from django.http import JsonResponse
 from .serializers import *
+from rest_framework import filters
+
 
 
 class InstituteViewSet(viewsets.ModelViewSet):
     queryset = Institute.objects.all()
+    search_fields = ['user__username','user__email','phone','name']
+    filter_backends = (filters.SearchFilter,)
     serializer_class = InstituteSerializer
     permission_classes = [InstitutePermission]
     model=serializer_class().Meta().model
@@ -21,6 +25,8 @@ class InstituteViewSet(viewsets.ModelViewSet):
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
+    search_fields = ['user__username','user__email','phone','name']
+    filter_backends = (filters.SearchFilter,)
     serializer_class = ProfileSerializer
     permission_classes = [ProfilePermission]
     model=serializer_class().Meta().model
@@ -29,6 +35,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
+    search_fields = ['name']
+    filter_backends = (filters.SearchFilter,)
     serializer_class = GroupSerializer
     permission_classes = [GroupPermission]
     model=serializer_class().Meta().model
@@ -37,6 +45,8 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class ProfileRoleViewSet(viewsets.ModelViewSet):
     queryset = ProfileRole.objects.all()
+    search_fields = ['user__name','user__user__username','user__phone','user__user__email','group__name']
+    filter_backends = (filters.SearchFilter,)
     serializer_class = ProfileRoleSerializer
     permission_classes = [ProfileRolePermission]
     model=serializer_class().Meta().model
@@ -79,8 +89,8 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)# if data is not valid then will not proceed forward and return a error msg
         user = serializer.validated_data['user']
         django_login(request,user)
-        # token, created=Token.objects.get_or_create(user=user)#created = True if token already exist else False
-        return Response({"token": "token.key" },status=200)
+        token, created=Token.objects.get_or_create(user=user)#created = True if token already exist else False
+        return Response({"token": token.key },status=200)
 
 class LogoutView(APIView):
     authentication_classes = (TokenAuthentication,)

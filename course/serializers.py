@@ -6,13 +6,18 @@ from django.contrib.auth import authenticate
 from .permissions import *
 import datetime as dt
 
-
+class lessonCourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lesson
+        fields='__all__'
+        read_only_fields=('date_updated',)
 
 class CourseSerializer(serializers.ModelSerializer):
+    lessons=lessonCourseSerializer(many=True,read_only=True,source='lessonCourse')
     class Meta:
         model = Course
-        fields=('institute','name','description','category','media','thumbnail','instructor','date_updated')
-        read_only_fields=('date_updated','institute')
+        fields=('institute','name','description','category','media','thumbnail','instructor','lessons','date_updated')
+        read_only_fields=('date_updated','institute','lessons')
 
     def create(self, validated_data):
         username = self.context['request'].user.username
@@ -40,7 +45,6 @@ class CourseSerializer(serializers.ModelSerializer):
         return instance
 
 class LessonSerializer(serializers.ModelSerializer):
-    course=CourseSerializer(many=True,write_only=True,source='lessonCourse')
     class Meta:
         model = Lesson
         fields=('course_id','number','name','description','media','thumbnail','question_number','assignment','date_updated')

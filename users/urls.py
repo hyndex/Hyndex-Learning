@@ -4,15 +4,15 @@ from .views import *
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
-router.register(r'Institute', InstituteViewSet)
-router.register(r'ProfileRole', ProfileRoleViewSet)
-router.register(r'Profile', ProfileViewSet)
-router.register(r'Group', GroupViewSet)
+router.register(r'institute', InstituteViewSet)
+router.register(r'profileRole', ProfileRoleViewSet)
+router.register(r'profile', ProfileViewSet)
+router.register(r'group', GroupViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
     path('', include(router.urls)),
-    path('ChangePassword/', ChangePasswordView.as_view()),
-    path('Logout/', LogoutView.as_view()),
-    path('Login/', LoginView.as_view()),
+    path('changePassword/', ChangePasswordView.as_view()),
+    path('logout/', LogoutView.as_view()),
+    path('login/', LoginView.as_view()),
 ]
