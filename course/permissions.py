@@ -8,8 +8,8 @@ from .models import *
 
 class CoursePermission(BasePermission):
     message='You are not authorized to this data'
-    SAFE_METHOD = ['GET','POST','PUT','DELETE']
     def has_permission(self, request, view):
+        SAFE_METHOD = ['GET','POST','PUT','DELETE']
         if request.method not in SAFE_METHOD:
             return False
         if request.user.is_authenticated:
@@ -41,8 +41,8 @@ def CourseQuerySet(request):
 
 class LessonPermission(BasePermission):
     message='You are not authorized to this data'
-    SAFE_METHOD = ['GET','POST','PUT','DELETE']
     def has_permission(self, request, view):
+        SAFE_METHOD = ['GET','POST','PUT','DELETE']
         if request.method not in SAFE_METHOD:
             return False
         if request.user.is_authenticated:

@@ -53,6 +53,7 @@ class InstituteSerializer(serializers.ModelSerializer):
         try:
             institute=Institute.objects.create(user=user,
                                 logo=validated_data.pop('logo'),
+                                name=validated_data.pop('name'),
                                 address=validated_data.pop('address'),
                                 phone=validated_data.pop('phone'),
                                 )

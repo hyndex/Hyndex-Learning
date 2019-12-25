@@ -14,7 +14,7 @@ class Institute(models.Model):
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     
     def __str__(self):
-        return self.name
+        return self.user.username
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
