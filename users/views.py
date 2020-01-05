@@ -10,6 +10,10 @@ from rest_framework.authtoken.models import Token
 from django.http import JsonResponse
 from .serializers import *
 from rest_framework import filters
+from rest_framework.decorators import action
+from rest_framework.parsers import FormParser, MultiPartParser,JSONParser, FileUploadParser
+# from sorl.thumbnail import get_thumbnail
+
 
 
 
@@ -17,16 +21,55 @@ class InstituteViewSet(viewsets.ModelViewSet):
     queryset = Institute.objects.all()
     search_fields = ['user__username','user__email','phone','name']
     filter_backends = (filters.SearchFilter,)
+    parser_classes=(FormParser, MultiPartParser,JSONParser)
+
     serializer_class = InstituteSerializer
     permission_classes = [InstitutePermission]
     model=serializer_class().Meta().model
     def get_queryset(self):
         return InstituteQuerySet(self.request)
+    # @action(detail=True,method='put')
+    # def image(self,request,pk=none):
+    #     institute=self.get_object()
+
+
+
+class PicUploadView(APIView):
+    parser_classes = (FileUploadParser,)
+    permission_classes = [ProfilePermission]
+    def put(self, request, filename, format=None):
+        username = request.user.username
+        up_file  = request.FILES['file']
+        extension = up_file.split(".")[1].lower()
+        if Profile.objects.filter(user__username=username).exist():
+            # up_file = get_thumbnail(up_file, '100x100', crop='center', quality=99)
+            destination = open('../media/profile/' + username+'.'+extension, 'wb+')
+            for chunk in up_file.chunks():
+                destination.write(chunk)
+            destination.close()
+            instance = Profile.objects.get(user__username=username)
+            instance.image=username+'.'+extension
+            instance.save()
+            return Response({instance},status=204)
+        if Institute.objects.filter(user__username=username).exist():
+            # up_file = get_thumbnail(up_file, '100x100', crop='center', quality=99)
+            destination = open('../media/profile/' + username+'.'+extension, 'wb+')
+            for chunk in up_file.chunks():
+                destination.write(chunk)
+            destination.close()
+            instance = Institute.objects.get(user__username=username)
+            instance.image=username+'.'+extension
+            instance.save()
+            return Response({instance},status=204)
+        #https://stackoverflow.com/questions/20473572/django-rest-framework-file-upload
+
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     search_fields = ['user__username','user__email','phone','name']
     filter_backends = (filters.SearchFilter,)
+    parser_classes=(FormParser, MultiPartParser,JSONParser)
+
     serializer_class = ProfileSerializer
     permission_classes = [ProfilePermission]
     model=serializer_class().Meta().model

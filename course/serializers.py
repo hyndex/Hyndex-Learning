@@ -16,7 +16,7 @@ class CourseSerializer(serializers.ModelSerializer):
     lessons=lessonCourseSerializer(many=True,read_only=True,source='lessonCourse')
     class Meta:
         model = Course
-        fields=('institute','name','description','category','media','thumbnail','instructor','lessons','date_updated')
+        fields=('id','institute','name','description','category','media','thumbnail','instructor','lessons','date_updated')
         read_only_fields=('date_updated','institute','lessons','instructor')
 
     def create(self, validated_data):
@@ -25,8 +25,12 @@ class CourseSerializer(serializers.ModelSerializer):
             corp = self.context['request'].user.username
         else:
             corp = Profile.objects.get(user__username=username).corp.user.username
-        institute=institute.objects.get(user__username=corp)
-        instructor=Profile.objects.get(user__username=username)
+        institute=Institute.objects.get(user__username=corp)
+        instructor=Profile.objects.filter(user__username=username)
+        if instructor.count()>0:
+            instructor=instructor[0]
+        else:
+            instructor=None
         course = Course.objects.create(institute=institute,instructor=instructor,**validated_data)
         return course
 
@@ -47,7 +51,6 @@ class CourseSerializer(serializers.ModelSerializer):
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        # fields='__all__'
         fields=('course','number','name','description','media','thumbnail','date_updated')
         read_only_fields=('date_updated','course')
         write_only_fields=('course_id',)
@@ -72,5 +75,7 @@ class LessonSerializer(serializers.ModelSerializer):
         instance.date_updated=dt.datetime.now()
         instance.save()
         return instance
+
+
 
 

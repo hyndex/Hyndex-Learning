@@ -11,15 +11,12 @@ Learning and Notification platform for Corporates. Corporates can easily train t
 
 # New Features!
 
-  - Notification Platform for small updates
-  - Notification for specific group of employees
-  - Give company updates via videos
-  - Quiz on Notification
+  - pip install django-backblazeb2-storage
+  - https://stackoverflow.com/questions/20473572/django-rest-framework-file-upload
+  - https://github.com/kkroening/ffmpeg-python
+  - https://pypi.org/project/python-ffmpeg-video-streaming/
+  - pip install sorl-thumbnail
 
-# Remember
-  - Quiz question will be acccessible throuvh only nested serialization of Lession ...
-  - Enable token auth
-  - need to make external queryset to be accessible by all
 
 # Task Done
   - Institute account create
@@ -27,3 +24,6 @@ Learning and Notification platform for Corporates. Corporates can easily train t
   - Profile created by Institute
   - Group Created by Institute
   - Profile Role by Institute
+
+# todo
+  - delete perm for stats.

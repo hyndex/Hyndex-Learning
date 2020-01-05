@@ -49,15 +49,17 @@ class LessonPermission(BasePermission):
             if (request.user.username == 'admin'):
                 return True
             if request.method in ['POST','PUT','DELETE']:
-                admin=Institute.objects.filter(user__username=request.user.username).count()>0
-                groupadmin=ProfileRole.objects.filter(user__user__username=request.user.username , ROLE_CHOICES='groupadmin').count()>0
-                if admin  or groupadmin:
+                masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
+                admin=ProfileRole.objects.filter(user__user__username=request.user.username,role='admin').count()>0
+                if admin or masterAccount:
                     return True
                 else:
                     return False
             if request.method == 'GET':
+                masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
                 confirm=Profile.objects.filter(user__username=request.user.username).count()>0
-                return confirm
+                if confirm or masterAccount:
+                    return True
         return True
 
 def LessonQuerySet(request):

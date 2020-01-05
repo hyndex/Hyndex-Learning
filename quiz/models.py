@@ -5,7 +5,6 @@ from users.models import *
 class Assignment(models.Model):
     institute = models.ForeignKey(Institute, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
-    media = models.ForeignKey(Media, on_delete=models.PROTECT,related_name='assignmentmedia',blank=True, null=True)
     teacher = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -31,7 +30,6 @@ class Choice(models.Model):
 
 class Question(models.Model):
     question = models.CharField(max_length=200)
-    media = models.ForeignKey(Media, on_delete=models.PROTECT,related_name='questionmedia',blank=True, null=True)
     choices = models.ManyToManyField(Choice)
     answer = models.ForeignKey(
         Choice, on_delete=models.CASCADE, related_name='answer', blank=True, null=True)

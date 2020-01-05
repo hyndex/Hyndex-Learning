@@ -1,7 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime as dt
-from media.models import *
 
 
 class Institute(models.Model):
@@ -9,7 +9,7 @@ class Institute(models.Model):
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     phone = models.CharField(max_length=20, blank=False, null=True, default = '')
     address = models.CharField(max_length=150, blank=True, null=True)
-    logo = models.ImageField(upload_to='logo/', blank=True, null=True)
+    logo = models.CharField(max_length=10, blank=True, null=True)
     status = models.CharField(max_length=10, blank=True, null=True)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     
@@ -22,7 +22,7 @@ class Profile(models.Model):
     phone = models.CharField(max_length=20, blank=False, null=True, default = '')
     address = models.CharField(max_length=150, blank=True, null=True)
     status = models.CharField(max_length=10, blank=True, null=True)
-    image = models.ImageField(upload_to='profile/',blank=True, null=True)   
+    image = models.CharField(max_length=10, blank=True, null=True)   
     corp=models.ForeignKey(Institute, on_delete=models.CASCADE,  related_name='profile_owner')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     
@@ -39,7 +39,7 @@ class Group(models.Model):
         return self.name
 
 class ProfileRole(models.Model):
-    ROLE_CHOICES = (('Admin','admin'),('GroupAdmin','groupadmin'),('Employee','employee'))
+    ROLE_CHOICES = (('Admin','admin'),('Instructor','instructor'),('Employee','employee'))
     user = models.OneToOneField(Profile, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.PROTECT, blank=True, null=True,default='')
     role = models.CharField(max_length=15, default='employee',choices=ROLE_CHOICES)

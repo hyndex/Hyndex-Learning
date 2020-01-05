@@ -13,13 +13,12 @@ class CourseReviewsPermission(BasePermission):
     def has_permission(self, request, view):
         if request.method not in SAFE_METHOD:
             return False
-        if request.method == 'POST':
-            return True
         if request.user.is_authenticated:
-            if request.method in ['GET','PUT','DELETE']:
-                confirm=Institute.objects.filter(user__username=request.user.username).count()>0
-                return confirm
-        return True
+            if request.method in ['POST','GET','PUT','DELETE']:
+                # confirm=Institute.objects.filter(user__username=request.user.username).count()>0
+                # return confirm
+                return True
+        return False
 
 
 def CourseReviewsQuerySet(request):
@@ -44,11 +43,11 @@ class LessonReviewsPermission(BasePermission):
         if request.method not in SAFE_METHOD:
             return False
         if request.user.is_authenticated:
-            if request.method in ['GET','DELETE','POST','PUT']:
-                institute=Institute.objects.filter(user__username=request.user.username).count()>0
-                profile=Profile.objects.filter(user__username=request.user.username).count()>0
-                if (Institute) or (profile and request.method in ['GET','PUT']):
-                    return True
+            # if request.method in ['GET','DELETE','POST','PUT']:
+            #     institute=Institute.objects.filter(user__username=request.user.username).count()>0
+            #     profile=Profile.objects.filter(user__username=request.user.username).count()>0
+            #     if Institute or profile:
+            return True
         return False
 
 def LessonReviewsQuerySet(request):
@@ -74,11 +73,11 @@ class CourseEnrollPermission(BasePermission):
             return False
         if request.user.is_authenticated:
             if request.method in ['GET','POST','PUT','DELETE']:
-                confirm=ProfileRole.objects.filter(
-                            Q(user__user__username=request.user.username),
-                            Q(role='admin')|Q(role='groupadmin')).count()>0
-                if confirm:
-                    return True
+                # confirm=ProfileRole.objects.filter(
+                #             Q(user__user__username=request.user.username),
+                #             Q(role='admin')|Q(role='groupadmin')).count()>0
+                # if confirm:
+                return True
         return False
 
    

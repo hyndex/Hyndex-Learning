@@ -1,6 +1,5 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import *
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -9,19 +8,14 @@ from .views import *
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
-router.register(r'institute', InstituteViewSet)
-router.register(r'profileRole', ProfileRoleViewSet)
-router.register(r'profile', ProfileViewSet)
-router.register(r'group', GroupViewSet)
+router.register(r'CourseReview', CourseReviewsViewSet)
+router.register(r'lessonReview', LessonReviewsViewSet)
+router.register(r'enroll', CourseEnrollViewSet)
+router.register(r'groupCourse', GroupCourseAllocationViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
     path('', include(router.urls)),
-    path('changePassword/', ChangePasswordView.as_view()),
-    path('logout/', LogoutView.as_view()),
-    path('login/', LoginView.as_view()),
-    path('upload/', PicUploadView.as_view()),
 ]
-
 if settings.DEBUG:
   urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

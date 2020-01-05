@@ -22,9 +22,10 @@ class LessonReviews(models.Model):
 
 class CourseEnroll(models.Model):
     user=models.ForeignKey(Profile, on_delete=models.CASCADE)
-    lesson=models.ForeignKey(Course, on_delete=models.CASCADE)
-    completed=models.CharField(max_length=10,blank=True, null=True,default='')
+    course=models.ForeignKey(Course, on_delete=models.CASCADE)
+    status=models.CharField(max_length=10,blank=True, null=True,default='started')
     time=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
+    updatedtime=models.DateTimeField(default=dt.datetime.now(),blank=True, null=True)
 
 class GroupCourseAllocation(models.Model):
     course = models.ForeignKey(Course, related_name='groupallocationcourse', on_delete=models.PROTECT,blank=True, null=True,default='')

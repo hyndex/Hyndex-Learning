@@ -4,9 +4,6 @@ from rest_framework.permissions import BasePermission
 from django.db.models import Q
 from users.models import *
 
-#pk=view.kwargs['id']
-
-
 class InstitutePermission(BasePermission):
     message='You are not authorized to this data'
     def has_permission(self, request, view):
