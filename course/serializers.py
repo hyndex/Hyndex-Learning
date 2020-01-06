@@ -35,9 +35,7 @@ class CourseSerializer(serializers.ModelSerializer):
         return course
 
     def update(self, instance, validated_data):
-        course_id = validated_data.pop('course_id')
-        course=Course.objects.get(id=course_id)
-
+        
         instance.name=validated_data.get('name',instance.name)
         instance.description=validated_data.get('description',instance.description)
         instance.category=validated_data.get('category',instance.category)
@@ -51,19 +49,18 @@ class CourseSerializer(serializers.ModelSerializer):
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields=('course','number','name','description','media','thumbnail','date_updated')
-        read_only_fields=('date_updated','course')
-        write_only_fields=('course_id',)
-        depth = 2
+        fields=('id','course','number','name','description','media','thumbnail','date_updated')
+        read_only_fields=('date_updated',)
+        depth = 1
 
     def create(self, validated_data):
-        course_id = validated_data.pop('course_id')
+        course_id = validated_data.pop('course')
         course=Course.objects.get(id=course_id)
         lession = Lesson.objects.create(course=course,**validated_data)
         return lession
 
     def update(self, instance, validated_data):
-        course_id = validated_data.pop('course_id')
+        course_id = validated_data.pop('course')
         course=Course.objects.get(id=course_id)
 
         instance.number=validated_data.get('number',instance.number)

@@ -66,7 +66,7 @@ def LessonQuerySet(request):
     if (request.user.username == 'admin'):
         return Lesson.objects.all()
     if Institute.objects.filter(user__username=request.user.username).count()>0:
-        return Lesson.objects.filter(institute__user__username=request.user.username)
+        return Lesson.objects.filter(course__institute__user__username=request.user.username)
     corp = Profile.objects.get(user__username=request.user.username).corp.user.username
-    return Lesson.objects.filter(institute__user__username=corp)
+    return Lesson.objects.filter(course__institute__user__username=corp)
 

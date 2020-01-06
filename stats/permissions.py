@@ -43,20 +43,14 @@ class LessonReviewsPermission(BasePermission):
         if request.method not in SAFE_METHOD:
             return False
         if request.user.is_authenticated:
-            # if request.method in ['GET','DELETE','POST','PUT']:
-            #     institute=Institute.objects.filter(user__username=request.user.username).count()>0
-            #     profile=Profile.objects.filter(user__username=request.user.username).count()>0
-            #     if Institute or profile:
             return True
         return False
 
 def LessonReviewsQuerySet(request):
     corp=Institute.objects.filter(user__username=request.user.username)
     if corp.count()>0:
-        if request.method in ['GET','DELETE']:
+        if request.method in ['GET','DELETE','PUT']:
             return LessonReviews.objects.filter(user__corp__username=request.user.username)
-        if request.method == 'PUT':
-            return LessonReviews.objects.filter(user__user__username=request.user.username)
 
     if request.method in ['PUT','DELETE']:
         return LessonReviews.objects.filter(user__user__username=request.user.username)
@@ -73,22 +67,22 @@ class CourseEnrollPermission(BasePermission):
             return False
         if request.user.is_authenticated:
             if request.method in ['GET','POST','PUT','DELETE']:
-                # confirm=ProfileRole.objects.filter(
-                #             Q(user__user__username=request.user.username),
-                #             Q(role='admin')|Q(role='groupadmin')).count()>0
-                # if confirm:
                 return True
         return False
 
    
 def CourseEnrollQuerySet(request):
     corp=Institute.objects.filter(user__username=request.user.username)
-    if corp.count()>0:
-        if request.method in ['POST','GET','DELETE','PUT']:
-            return LessonReviews.objects.filter(user__corp__username=request.user.username)
-        
+    admin=ProfileRole.objects.filter(user__user__username=request.user.username,role='admin')
+    
+    if corp.count()>0 or admin.count()>0:
+        if request.method in ['GET','DELETE','PUT']:
+            if admin.count()>0:
+                return CourseEnroll.objects.filter(user__corp__username=admin.corp.user.username)
+            return CourseEnroll.objects.filter(user__corp__username=request.user.username)
     if request.method in ['GET','POST','PUT','DELETE']:
         return CourseEnroll.objects.filter(user__user__username=request.user.username)
+        
 
 
 

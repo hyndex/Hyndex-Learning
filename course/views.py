@@ -10,6 +10,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.parsers import FormParser, MultiPartParser,JSONParser, FileUploadParser
 from rest_framework.decorators import action
+from django.core.files.storage import default_storage
+from django.core.files.storage import FileSystemStorage
 import datetime as dt
 
 
@@ -41,7 +43,7 @@ class LessonViewSet(viewsets.ModelViewSet):
         return LessonQuerySet(self.request)
 
 class CourseUploadView(APIView):
-    parser_classes = (FileUploadParser,)
+    parser_classes = (MultiPartParser,)
 
     def put(self, request, pk, format=None):
         if request.user.is_authenticated:
@@ -51,15 +53,13 @@ class CourseUploadView(APIView):
                 process=Course.objects.get(id=pk)
                 process.media='process'+str(dt.datetime.now())
                 process.save()
-                extension = up_file.split(".")[1].lower()
-                destination = open('../media/'+instance.institute.id+'/course/'+instance.id+'.'+extension, 'wb+')
-                for chunk in up_file.chunks():
-                    destination.write(chunk)
-                destination.close()
-                instance.media=instance.id+'.'+extension
+                extension = 'mp4'#up_file.split(".")[1].lower()
+                # fs = FileSystemStorage(location="/course")
+                destination = default_storage.save(str(instance.id)+'.'+extension, up_file)
+                instance.media=destination
                 instance.save()
-                return Response({instance},status=204)
-            if request.method in ['POST','PUT','DELETE']:
+                return Response({"success"},status=204)
+            if request.method in ['PUT','DELETE']:
                 masterAccount = Institute.objects.filter(user__username=request.user.username).count()>0
                 admin=ProfileRole.objects.filter(user__user__username=request.user.username,role='admin').count()>0
                 if admin or masterAccount:
@@ -69,28 +69,22 @@ class CourseUploadView(APIView):
                         process=Course.objects.get(id=pk)
                         process.media='process'+str(dt.datetime.now())
                         process.save()
-                        extension = up_file.split(".")[1].lower()
-                        destination = open('../media/'+instance.institute.id+'/course/'+instance.id+'.'+extension, 'wb+')
-                        for chunk in up_file.chunks():
-                            destination.write(chunk)
-                        destination.close()
-                        instance.media=instance.id+'.'+extension
+                        extension = 'mp4'# up_file.split(".")[1].lower()
+                        destination = default_storage.save(str(instance.id)+'.'+extension, up_file)
+                        instance.media=destination
                         instance.save()
-                        return Response({instance},status=204)
+                        return Response({"success"},status=204)
                     else:
                         instance=instance.objects.get(institute__user__username=Profile.objects.get(user__username=request.user.username).corp.user.username,id=pk)
                         up_file  = request.FILES['file']
                         process=Course.objects.get(id=pk)
                         process.media='process'+str(dt.datetime.now())
                         process.save()
-                        extension = up_file.split(".")[1].lower()
-                        destination = open('../media/'+instance.institute.id+'/course/'+instance.id+'.'+extension, 'wb+')
-                        for chunk in up_file.chunks():
-                            destination.write(chunk)
-                        destination.close()
-                        instance.media=instance.id+'.'+extension
+                        extension = 'mp4'# up_file.split(".")[1].lower()
+                        destination = default_storage.save(str(instance.id)+'.'+extension, up_file)
+                        instance.media=destination
                         instance.save()
-                        return Response({instance},status=204)
+                        return Response({"success"},status=204)
                 else:
                     return Response({"not found"},status=404)
 
