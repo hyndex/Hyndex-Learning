@@ -13,6 +13,9 @@ class Course(models.Model):
     description = models.TextField(blank=False, null=True, default = '')
     category = models.CharField(max_length=50, blank=False, null=True, default = '')
     media = models.CharField(max_length=200, null=True, blank=True,default='pending')
+    original = models.FileField(upload_to='course/',blank=True, null=True)
+    media360 = models.FileField(upload_to='course/',blank=True, null=True)
+    media720 = models.FileField(upload_to='course/',blank=True, null=True)
     thumbnail = models.CharField(max_length=200, null=True, blank=True,default='')
     instructor = models.ForeignKey(Profile,on_delete=models.PROTECT,blank=True, null=True)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True, null=True)
@@ -24,11 +27,14 @@ class Course(models.Model):
         return self.lesson_set.all().order_by('number')
 
 class Lesson(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name='lessonCourse')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     number = models.IntegerField(blank=False, null=True, default = 0)
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     description = models.TextField(blank=False, null=True, default = '')
     media = models.CharField(max_length=200, null=True, blank=True,default='')
+    original = models.FileField(upload_to='Lesson/',blank=True, null=True)
+    media360 = models.FileField(upload_to='Lesson/',blank=True, null=True)
+    media720 = models.FileField(upload_to='Lesson/',blank=True, null=True)
     thumbnail = models.CharField(max_length=200, null=True, blank=True,default='')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True, null=True)
 

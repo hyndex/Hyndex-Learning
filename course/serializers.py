@@ -16,8 +16,8 @@ class CourseSerializer(serializers.ModelSerializer):
     lessons=lessonCourseSerializer(many=True,read_only=True,source='lessonCourse')
     class Meta:
         model = Course
-        fields=('id','institute','name','description','category','media','thumbnail','instructor','lessons','date_updated')
-        read_only_fields=('date_updated','institute','lessons','instructor')
+        fields=('id','institute','name','description','category','media','original','media360','media720','thumbnail','instructor','lessons','date_updated')
+        read_only_fields=('date_updated','institute','lessons','instructor','original','media360','media720')
 
     def create(self, validated_data):
         username = self.context['request'].user.username
@@ -47,10 +47,11 @@ class CourseSerializer(serializers.ModelSerializer):
         return instance
 
 class LessonSerializer(serializers.ModelSerializer):
+    course = serializers.CharField(write_only=True)
     class Meta:
         model = Lesson
-        fields=('id','course','number','name','description','media','thumbnail','date_updated')
-        read_only_fields=('date_updated',)
+        fields=('id','course','number','name','description','media','original','media360','media720','thumbnail','date_updated')
+        read_only_fields=('date_updated','media','original','media360','media720','thumbnail')
         depth = 1
 
     def create(self, validated_data):
@@ -67,7 +68,6 @@ class LessonSerializer(serializers.ModelSerializer):
         instance.name=validated_data.get('name',instance.name)
         instance.description=validated_data.get('description',instance.description)
         instance.media=validated_data.get('media',instance.media)
-        instance.thumbnail=validated_data.get('thumbnail',instance.thumbnail)
         instance.question_number=validated_data.get('question_number',instance.question_number)
         instance.date_updated=dt.datetime.now()
         instance.save()

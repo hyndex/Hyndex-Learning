@@ -9,7 +9,7 @@ class Institute(models.Model):
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     phone = models.CharField(max_length=20, blank=False, null=True, default = '')
     address = models.CharField(max_length=150, blank=True, null=True)
-    logo = models.CharField(max_length=10, blank=True, null=True)
+    logo = models.ImageField(upload_to='Institute/',blank=True, null=True)
     status = models.CharField(max_length=10, blank=True, null=True)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     
@@ -22,7 +22,7 @@ class Profile(models.Model):
     phone = models.CharField(max_length=20, blank=False, null=True, default = '')
     address = models.CharField(max_length=150, blank=True, null=True)
     status = models.CharField(max_length=10, blank=True, null=True)
-    image = models.CharField(max_length=10, blank=True, null=True)   
+    image = models.ImageField(upload_to='Profile/',blank=True, null=True)
     corp=models.ForeignKey(Institute, on_delete=models.CASCADE,  related_name='profile_owner')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     
@@ -32,7 +32,7 @@ class Profile(models.Model):
 class Group(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to='profile/',blank=True, null=True)
+    image = models.ImageField(upload_to='Group/',blank=True, null=True)
     corp=models.ForeignKey(Institute, on_delete=models.CASCADE,  related_name='group_owner')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)  
     def __str__(self):
@@ -48,3 +48,5 @@ class ProfileRole(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Role_updated_by', blank=True,null=True)
     def __str__(self):
         return self.user.user.username+'->'+self.group.name+'('+self.role+')'
+
+

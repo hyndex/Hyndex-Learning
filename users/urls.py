@@ -20,7 +20,7 @@ urlpatterns = [
     path('changePassword/', ChangePasswordView.as_view()),
     path('logout/', LogoutView.as_view()),
     path('login/', LoginView.as_view()),
-    path('upload/', PicUploadView.as_view()),
+    path('upload/', picUploadView.as_view()),
 ]
 
 if settings.DEBUG:

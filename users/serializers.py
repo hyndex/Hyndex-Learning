@@ -15,12 +15,13 @@ class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=True)
     class Meta:
         model = Profile
-        fields = ('user','name','phone','address','status','image')
+        fields = ('id','user','name','phone','address','status','image')
+        read_only_fields=('image',)
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
-        user = User.objects.create(username=user_data['username'],
-                            email=user_data['email'],
+        user = User.objects.create(username=str(user_data['username']).lower(),
+                            email=str(user_data['email']).lower(),
                             )
         user.set_password(user_data['password'])
         user.save()
@@ -29,7 +30,6 @@ class ProfileSerializer(serializers.ModelSerializer):
                                 phone=validated_data.pop('phone'),
                                 address=validated_data.pop('address'),
                                 status=validated_data.pop('status'),
-                                image=validated_data.pop('image'),
                                 corp= Institute.objects.get(user=self.context['request'].user)
                                 )
             return profile
@@ -43,17 +43,17 @@ class InstituteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Institute
         fields=('id','user','name','logo','address','phone')
-        
+        read_only_fields=('logo',)
+
     def create(self, validated_data):
         user_data = validated_data.pop('user')
-        user = User.objects.create(username=user_data['username'],
-                            email=user_data['email'],
+        user = User.objects.create(username=str(user_data['username']).lower(),
+                            email=str(user_data['email']).lower(),
                             )
         user.set_password(user_data['password'])
         user.save()
         try:
             institute=Institute.objects.create(user=user,
-                                logo=validated_data.pop('logo'),
                                 name=validated_data.pop('name'),
                                 address=validated_data.pop('address'),
                                 phone=validated_data.pop('phone'),

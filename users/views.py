@@ -12,6 +12,8 @@ from .serializers import *
 from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser,JSONParser, FileUploadParser
+from django.core.files.storage import default_storage
+from django.core.files.storage import FileSystemStorage
 # from sorl.thumbnail import get_thumbnail
 
 
@@ -28,40 +30,30 @@ class InstituteViewSet(viewsets.ModelViewSet):
     model=serializer_class().Meta().model
     def get_queryset(self):
         return InstituteQuerySet(self.request)
-    # @action(detail=True,method='put')
-    # def image(self,request,pk=none):
-    #     institute=self.get_object()
 
 
 
-class PicUploadView(APIView):
-    parser_classes = (FileUploadParser,)
-    permission_classes = [ProfilePermission]
-    def put(self, request, filename, format=None):
-        username = request.user.username
-        up_file  = request.FILES['file']
-        extension = up_file.split(".")[1].lower()
-        if Profile.objects.filter(user__username=username).exist():
-            # up_file = get_thumbnail(up_file, '100x100', crop='center', quality=99)
-            destination = open('../media/profile/' + username+'.'+extension, 'wb+')
-            for chunk in up_file.chunks():
-                destination.write(chunk)
-            destination.close()
-            instance = Profile.objects.get(user__username=username)
-            instance.image=username+'.'+extension
-            instance.save()
-            return Response({instance},status=204)
-        if Institute.objects.filter(user__username=username).exist():
-            # up_file = get_thumbnail(up_file, '100x100', crop='center', quality=99)
-            destination = open('../media/profile/' + username+'.'+extension, 'wb+')
-            for chunk in up_file.chunks():
-                destination.write(chunk)
-            destination.close()
-            instance = Institute.objects.get(user__username=username)
-            instance.image=username+'.'+extension
-            instance.save()
-            return Response({instance},status=204)
-        #https://stackoverflow.com/questions/20473572/django-rest-framework-file-upload
+class picUploadView(APIView):
+    parser_classes = (MultiPartParser,)
+
+    def put(self, request, format=None):
+        if request.user.is_authenticated:
+            if (request.user.username == 'admin'):
+                return Response({"success"},status=204)
+            if request.method in ['PUT','DELETE']:
+                user=ProfileRole.objects.filter(user__user__username=request.user.username).count()>0
+                if user:
+                    instance=Profile.objects.get(user__username=request.user.username)
+                    instance.media=request.FILES['file']
+                    instance.save()
+                    return Response({"success"},status=204)
+                else:
+                    instance=Institute.objects.get(user__username=request.user.username)
+                    instance.logo=request.FILES['file']
+                    instance.save()
+                    return Response({"success"},status=204)
+            else:
+                return Response({"not found"},status=404)
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -144,3 +136,5 @@ class LogoutView(APIView):
             pass
         django_logout(request)
         return Response({"msg":"successfully logout"},status=204)
+
+

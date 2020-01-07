@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'course',
     'stats',
     'quiz',
+    'django_cleanup.apps.CleanupConfig',
 ]
 INSTALLED_APPS += ['django_extensions']
 
@@ -66,7 +67,7 @@ CORS_ALLOW_CREDENTIALS = True
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
@@ -137,6 +138,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
+
+# BACKBLAZEB2_APP_KEY_ID = 'your-app-key-id'
+# BACKBLAZEB2_APP_KEY = 'your-app-key'
+# BACKBLAZEB2_BUCKET_NAME = 'bucketname'
+# BACKBLAZEB2_BUCKET_ID = 'bucketid'
+# BACKBLAZEB2_AUTHORIZATION_BUFFER = timedelta(hours=23)
+# BACKBLAZEB2_USER_AGENT = 'hyndex/django-backblazeb2+python3.6.2'
+
+
 
 STATIC_URL = '/static/'
 MEDIA_URL =  '/media/'
